@@ -15,6 +15,7 @@ function Chaos.OnUpdate()
 	end
 	if not My.Hero then
 		My.Hero = Heroes.GetLocal()
+		My.Player = Players.GetLocal()
 		return
 	end
 	if not My.Name or not My.Team then
@@ -37,8 +38,22 @@ function Chaos.OnUpdate()
 		end
 		if Ability.IsReady(My.Rift) and Ability.IsCastable(My.Rift, NPC.GetMana(My.Hero)) then
 			Ability.CastTarget(My.Rift, enemy)
-			My.PrevCastTime = os.clock()
 		end
+		Player.AttackTarget(My.Player, My.Hero, enemy)
+		if NPC.HasModifier(enemy, 'modifier_chaos_knight_reality_rift_buff') then
+			local orchid = NPC.GetItem(My.Hero, "item_bloodthorn")
+		    if not orchid then
+		        orchid = NPC.GetItem(My.Hero, "item_orchid")
+		    end
+		    local manta = NPC.GetItem(My.Hero, "item_manta")
+		    if orchid and Ability.IsReady(orchid) and Ability.IsCastable(orchid, NPC.GetMana(My.Hero)) then
+		    	Ability.CastTarget(orchid, enemy)
+		    end
+		    if manta and Ability.IsReady(manta) and Ability.IsCastable(manta, NPC.GetMana(My.Hero)) then
+		    	Ability.CastNoTarget(manta)
+		    end
+		end
+		My.PrevCastTime = os.clock()
 	end
 
 end
