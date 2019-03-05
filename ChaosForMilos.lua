@@ -5,6 +5,7 @@ Menu.AddMenuIcon({"Hero Specific", "Chaos Knight"}, "panorama/images/heroes/icon
 local MainOption = Menu.AddOptionBool({"Hero Specific", "Chaos Knight"}, "Reality Rift helper", false)
 local Range = Menu.AddOptionSlider({"Hero Specific", "Chaos Knight"}, "Closest to mouse range", 50, 800, 300)
 local Key = Menu.AddKeyOption({"Hero Specific", "Chaos Knight"}, "Reality Rift key", Enum.ButtonCode.KEY_F1)
+local ComboKey = Menu.AddKeyOption({"Hero Specific", "Chaos Knight"}, "Combo key", Enum.ButtonCode.KEY_F2)
 
 local My = {}
 My.PrevCastTime = 0
@@ -31,7 +32,7 @@ function Chaos.OnUpdate()
 		return
 	end
 
-	if Menu.IsKeyDown(Key) and Chaos.SleepReady(0.3, My.PrevCastTime) and Entity.IsAlive(My.Hero) and not NPC.IsSilenced(My.Hero) and not NPC.IsStunned(My.Hero)  then 
+	if (Menu.IsKeyDown(Key) or Menu.IsKeyDown(ComboKey)) and Chaos.SleepReady(0.3, My.PrevCastTime) and Entity.IsAlive(My.Hero) and not NPC.IsSilenced(My.Hero) and not NPC.IsStunned(My.Hero)  then 
 		local enemy = Input.GetNearestHeroToCursor(My.Team, Enum.TeamType.TEAM_ENEMY)
 		if not enemy or enemy == 0 or not NPC.IsPositionInRange(enemy, Input.GetWorldCursorPos(), Menu.GetValue(Range)) then
 			return
@@ -40,7 +41,7 @@ function Chaos.OnUpdate()
 			Ability.CastTarget(My.Rift, enemy)
 		end
 		Player.AttackTarget(My.Player, My.Hero, enemy)
-		if NPC.HasModifier(enemy, 'modifier_chaos_knight_reality_rift_buff') then
+		if NPC.HasModifier(enemy, 'modifier_chaos_knight_reality_rift_buff') and Menu.IsKeyDown(ComboKey) then
 			local orchid = NPC.GetItem(My.Hero, "item_bloodthorn")
 		    if not orchid then
 		        orchid = NPC.GetItem(My.Hero, "item_orchid")
